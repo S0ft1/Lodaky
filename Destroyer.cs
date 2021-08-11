@@ -10,9 +10,10 @@ namespace Lodaky
     {
         public Destroyer()
         {
-            Width = 1;
             Lenght = 2;
             type = FieldTypes.DD;
+            baseReloadTime = 5;
+            reloadTime = baseReloadTime;
         }
         public override void attack(int x, int y)
         {

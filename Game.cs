@@ -8,20 +8,19 @@ namespace Lodaky
 {
     class Game
     {
-
         public GameStates currentGameState = GameStates.PLANNING;
         public FieldTypes[,] playersField = new FieldTypes[10, 10];
         public FieldTypes[,] enemysField = new FieldTypes[10, 10];
         public FieldTypes chosenShip = FieldTypes.SEA;
-        private int numberOfShips = 4;
+        private ushort numberOfShips = 4;
         private Ship[] allyFleet = new Ship[4];
         private Ship[] enemyFleet = new Ship[4];
         public bool rotation = false;
-        private int rowLenght = 10;
-        private bool isAiPlanning = false;
+        private ushort rowLenght = 10;
+        private bool aiTurn = false;
         private AI ai = new AI();
 
-        public bool IsAiPlanning { get => isAiPlanning; set => isAiPlanning = value; }
+        public bool AiTurn { get => aiTurn; set => aiTurn = value; }
 
         public Game()
         {
@@ -52,21 +51,21 @@ namespace Lodaky
         }
 
         public void aiPlanning()
-        {           
+        {
             numberOfShips = 4;
-            for(int i = 0; i < numberOfShips; ++i)
+            for (int i = 0; i < numberOfShips; ++i)
             {
                 Position pos = aiPlanningController();
                 chosenShip = enemyFleet[i].getType();
                 while (!placeShip(pos))
                 {
                     pos = aiPlanningController();
-                    Console.WriteLine("AI failed to place a shipxx");
+                    Console.WriteLine("AI failed to place a ship");
                 };
             }
         }
 
-        
+
         public void chooseShip(FieldTypes ship)
         {
             chosenShip = ship;
@@ -74,51 +73,43 @@ namespace Lodaky
 
         public bool placeShip(Position position)
         {
-            int shipLenght = 0;
-            int shipWidth = 0;
-           
+            ushort shipLenght = 0;
+
             switch (chosenShip)
             {
                 case FieldTypes.BB:
                     shipLenght = allyFleet[0].getLenght();
-                    shipWidth = allyFleet[0].getWidth();
                     break;
+
                 case FieldTypes.CV:
                     shipLenght = allyFleet[1].getLenght();
-                    shipWidth = allyFleet[1].getWidth();
                     break;
+
                 case FieldTypes.CA:
                     shipLenght = allyFleet[2].getLenght();
-                    shipWidth = allyFleet[2].getWidth();
                     break;
+
                 case FieldTypes.DD:
                     shipLenght = allyFleet[3].getLenght();
-                    shipWidth = allyFleet[3].getWidth();
                     break;
+
                 default:
                     return false;
             }
 
             if (!rotation)
             {
-                return placeNonRotatedShip(position, shipLenght, shipWidth);
+                return placeNonRotatedShip(position, shipLenght);
             }
             else
             {
-                return placeRotatedShip(position, shipLenght, shipWidth);
+                return placeRotatedShip(position, shipLenght);
             }
 
         }
 
-        private bool placeNonRotatedShip(Position position, int shipLenght, int shipWidth)
+        private Position checkBorders(Position position, ushort shipLenght)
         {
-
-            FieldTypes[,] tempField = playersField;
-            if (isAiPlanning)
-            {
-                tempField = enemysField;
-            }
-            //checknuti od hranice
             if (position.X + shipLenght > rowLenght)
             {
                 position.X = rowLenght - shipLenght;
@@ -131,39 +122,11 @@ namespace Lodaky
                     position.Y = position.Y - 1;
                 }
             }
-            //checknuti ostatnich lodi
-            if (possiblePosition(position, shipLenght, shipWidth,tempField))
-            {
-                for (int i = 0; i < shipLenght; ++i)
-                {
-                    if (chosenShip != FieldTypes.CV)
-                    {
-                        tempField[position.X + i, position.Y] = chosenShip;
-                    }
-                    else
-                    {
-                        tempField[position.X + i, position.Y] = chosenShip;
-                        tempField[position.X + i, position.Y+1] = chosenShip;
-                    }
-                }
-               
-                //allyFleet[0].setPosition(position);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return position;
         }
 
-        private bool placeRotatedShip(Position position, int shipLenght, int shipWidth)
+        private Position checkBordersRotated(Position position, ushort shipLenght)
         {
-            FieldTypes[,] tempField = playersField;
-            if (isAiPlanning)
-            {
-                tempField = enemysField;
-            }
-            //checknuti od hranice
             if (position.Y - shipLenght + 1 <= 0)
             {
                 position.Y = shipLenght - 1;
@@ -175,22 +138,55 @@ namespace Lodaky
                     position.X = position.X - 1;
                 }
             }
-            //checknuti ostatnich lodi
-            if (possiblePosition(position, shipLenght, shipWidth, tempField))
+            return position;
+        }
+
+        private void drawShip(FieldTypes[,] tempField, Position position, ushort shipLenght)
+        {
+            for (int i = 0; i < shipLenght; ++i)
             {
-                for (int i = 0; i < shipLenght; ++i)
+                if (chosenShip != FieldTypes.CV)
                 {
-                    if (chosenShip != FieldTypes.CV)
-                    {
-                        tempField[position.X, position.Y - i] = chosenShip;
-                    }
-                    else
-                    {
-                        tempField[position.X, position.Y - i] = chosenShip;
-                        tempField[position.X+1, position.Y - i] = chosenShip;
-                    }
+                    tempField[position.X + i, position.Y] = chosenShip;
                 }
-               // allyFleet[0].setPosition(position);
+                else
+                {
+                    tempField[position.X + i, position.Y] = chosenShip;
+                    tempField[position.X + i, position.Y + 1] = chosenShip;
+                }
+            }
+        }
+        private void drawRotatedShip(FieldTypes[,] tempField, Position position, ushort shipLenght)
+        {
+            for (int i = 0; i < shipLenght; ++i)
+            {
+                if (chosenShip != FieldTypes.CV)
+                {
+                    tempField[position.X, position.Y - i] = chosenShip;
+                }
+                else
+                {
+                    tempField[position.X, position.Y - i] = chosenShip;
+                    tempField[position.X + 1, position.Y - i] = chosenShip;
+                }
+            }
+        }
+        private bool placeNonRotatedShip(Position position, ushort shipLenght)
+        {
+
+            FieldTypes[,] tempField = playersField;
+            if (aiTurn)
+            {
+                tempField = enemysField;
+            }
+
+            //checknuti od hranice
+            position = checkBorders(position, shipLenght);
+
+            //checknuti ostatnich lodi
+            if (possiblePosition(position, shipLenght, tempField))
+            {
+                drawShip(tempField, position, shipLenght);
                 return true;
             }
             else
@@ -199,7 +195,33 @@ namespace Lodaky
             }
         }
 
-        private bool possiblePosition(Position position, int shipLenght, int shipWidth, FieldTypes[,] tempField)
+
+
+        private bool placeRotatedShip(Position position, ushort shipLenght)
+        {
+            FieldTypes[,] tempField = playersField;
+            if (aiTurn)
+            {
+                tempField = enemysField;
+            }
+
+            //checknuti od hranice
+            position = checkBordersRotated(position, shipLenght);
+
+            //checknuti ostatnich lodi
+            if (possiblePosition(position, shipLenght, tempField))
+            {
+
+                drawRotatedShip(tempField, position, shipLenght);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool possiblePosition(Position position, ushort shipLenght, FieldTypes[,] tempField)
         {
             if (!rotation)
             {
@@ -207,7 +229,7 @@ namespace Lodaky
                 {
                     if (chosenShip == FieldTypes.CV)
                     {
-                        if (tempField[position.X + i, position.Y] != FieldTypes.SEA || tempField[position.X + i, position.Y +1] != FieldTypes.SEA)
+                        if (tempField[position.X + i, position.Y] != FieldTypes.SEA || tempField[position.X + i, position.Y + 1] != FieldTypes.SEA)
                         {
 
                             selectCorrectField(tempField);
@@ -231,7 +253,7 @@ namespace Lodaky
                 {
                     if (chosenShip == FieldTypes.CV)
                     {
-                        if (tempField[position.X, position.Y - i] != FieldTypes.SEA || tempField[position.X+1, position.Y - i] != FieldTypes.SEA)
+                        if (tempField[position.X, position.Y - i] != FieldTypes.SEA || tempField[position.X + 1, position.Y - i] != FieldTypes.SEA)
                         {
                             selectCorrectField(tempField);
                             return false;
@@ -252,7 +274,7 @@ namespace Lodaky
         }
         private void selectCorrectField(FieldTypes[,] tempField)
         {
-            if (isAiPlanning)
+            if (aiTurn)
             {
                 enemysField = tempField;
             }
@@ -282,12 +304,38 @@ namespace Lodaky
 
         public bool battleRequest(Position position)
         {
+            aiTurn = false;
             Console.WriteLine(position.X + "," + position.Y);
+            if (!aiTurn)
+            {
+                if(enemysField[position.X,position.Y] != FieldTypes.SEA && enemysField[position.X, position.Y] != FieldTypes.SPOT)
+                {
+                    Console.WriteLine("hit");
+
+                }
+                else
+                {
+                    Console.WriteLine("miss");
+                }
+            }
+            else
+            {
+                if (playersField[position.X, position.Y] != FieldTypes.SEA && playersField[position.X, position.Y] != FieldTypes.SPOT)
+                {
+                    Console.WriteLine("hit");
+                }
+                else
+                {
+                    Console.WriteLine("miss");
+                }
+            }
+            
+            Console.WriteLine(enemysField[position.X,position.Y]);
             return false;
         }
     }
 
 }
 
-    
+
 

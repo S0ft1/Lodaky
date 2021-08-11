@@ -40,6 +40,10 @@ namespace Lodaky
             this.CAButton = new System.Windows.Forms.Button();
             this.DDButton = new System.Windows.Forms.Button();
             this.Rotation = new System.Windows.Forms.Button();
+            this.bbtxt = new System.Windows.Forms.TextBox();
+            this.cvtxt = new System.Windows.Forms.TextBox();
+            this.catxt = new System.Windows.Forms.TextBox();
+            this.ddtxt = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout(); 
             this.tableLayoutPanel4.SuspendLayout();
@@ -144,15 +148,19 @@ namespace Lodaky
             this.tableLayoutPanel3.BackColor = System.Drawing.SystemColors.ControlDark;
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Inset;
             
-            this.tableLayoutPanel3.ColumnCount = 1;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel3.Controls.Add(this.BBButton, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.CVButton, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.CAButton, 0, 2);
             this.tableLayoutPanel3.Controls.Add(this.DDButton, 0, 3);
             this.tableLayoutPanel3.Controls.Add(this.Rotation, 0, 4);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(698, 60);
+            this.tableLayoutPanel3.Controls.Add(this.bbtxt, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.cvtxt, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this.catxt, 1, 2);
+            this.tableLayoutPanel3.Controls.Add(this.ddtxt, 1, 3);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(680, 60);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 5;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
@@ -160,7 +168,7 @@ namespace Lodaky
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(132, 303);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(165, 303);
             this.tableLayoutPanel3.TabIndex = 3;
             this.tableLayoutPanel3.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel3_Paint);
 
@@ -238,6 +246,53 @@ namespace Lodaky
             this.Rotation.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
             this.Rotation.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gray;
             this.Rotation.Click += new EventHandler(this.Rotation_Click);
+
+
+            //
+            // txtboxy
+            //
+
+           
+            this.bbtxt.Text = "1";
+            this.bbtxt.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bbtxt.AutoSize = true;
+            this.bbtxt.TextAlign = HorizontalAlignment.Center;
+            this.bbtxt.Anchor = AnchorStyles.None;
+            this.bbtxt.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.bbtxt.BorderStyle = BorderStyle.None;
+            this.bbtxt.ForeColor = System.Drawing.Color.Black;
+            this.bbtxt.ReadOnly = true;
+
+            this.cvtxt.Text = "1";
+            this.cvtxt.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cvtxt.AutoSize = true;
+            this.cvtxt.TextAlign = HorizontalAlignment.Center;
+            this.cvtxt.Anchor = AnchorStyles.None;
+            this.cvtxt.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.cvtxt.BorderStyle = BorderStyle.None;
+            this.cvtxt.ForeColor = System.Drawing.Color.Black;
+            this.cvtxt.ReadOnly = true;
+
+            this.catxt.Text = "1";
+            this.catxt.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.catxt.AutoSize = true;
+            this.catxt.TextAlign = HorizontalAlignment.Center;
+            this.catxt.Anchor = AnchorStyles.None;
+            this.catxt.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.catxt.BorderStyle = BorderStyle.None;
+            this.catxt.ForeColor = System.Drawing.Color.Black;
+            this.catxt.ReadOnly = true;
+
+            this.ddtxt.Text = "1";
+            this.ddtxt.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ddtxt.AutoSize = true;
+            this.ddtxt.TextAlign = HorizontalAlignment.Center;
+            this.ddtxt.Anchor = AnchorStyles.None;
+            this.ddtxt.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.ddtxt.BorderStyle = BorderStyle.None;
+            this.ddtxt.ForeColor = System.Drawing.Color.Black;
+            this.ddtxt.ReadOnly = true;
+
             // 
             // Form1
             // 
@@ -260,6 +315,10 @@ namespace Lodaky
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1; 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private TextBox bbtxt;
+        private TextBox cvtxt;
+        private TextBox catxt;
+        private TextBox ddtxt;
         private Button BBButton;
         private Button CVButton;
         private Button CAButton;

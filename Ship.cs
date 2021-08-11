@@ -9,12 +9,13 @@ namespace Lodaky
 {
     abstract class Ship
     {
-        protected int Width;
-        protected int Lenght;
+        protected ushort Lenght;
         protected Image image;
         protected Position position = new Position(0, 0);
         protected bool destroyed = false;
         protected FieldTypes type;
+        protected ushort baseReloadTime;
+        protected ushort reloadTime;
 
         public FieldTypes getType()
         {
@@ -25,15 +26,11 @@ namespace Lodaky
             position.X = _position.X;
             position.Y = _position.Y;
         }
-        public int getLenght()
+        public ushort getLenght()
         {
             return Lenght;
         }
 
-        public int getWidth()
-        {
-            return Width;
-        }
         public abstract void attack(int x, int y);
     }
 }

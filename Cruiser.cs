@@ -10,9 +10,10 @@ namespace Lodaky
     {
         public Cruiser()
         {
-            Width = 1;
             Lenght = 3;
             type = FieldTypes.CA;
+            baseReloadTime = 2;
+            reloadTime = baseReloadTime;
         }
         public override void attack(int x, int y)
         {

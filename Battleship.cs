@@ -11,9 +11,10 @@ namespace Lodaky
     {
         public Battleship()
         { 
-            Width = 1;
             Lenght = 4;
             type = FieldTypes.BB;
+            baseReloadTime = 3;
+            reloadTime = baseReloadTime;
         }
 
         public override void attack(int x, int y)

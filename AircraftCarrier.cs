@@ -10,9 +10,10 @@ namespace Lodaky
     {
         public AircraftCarrier()
         {
-            Width = 2;
             Lenght = 3;
             type = FieldTypes.CV;
+            baseReloadTime = 4;
+            reloadTime = baseReloadTime;
         }
         public override void attack(int x, int y)
         {

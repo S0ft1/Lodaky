@@ -30,37 +30,49 @@ namespace Lodaky
             {
                 if (game.planningRequest(getButtonPosition(btn)))
                 {
+                    disableButtons();
                     if (game.currentGameState != GameStates.PLANNING)
                     {
                         aiPlanningManagement();
                     }
                     updateField();
-                    disableButtons();
+                   
                 }
             }
             else
             {
-
                 game.battleRequest(getButtonPosition(btn));
             }
         }
         private void aiPlanningManagement()
         {
-            game.IsAiPlanning = true;
+            game.AiTurn = true;
             game.aiPlanning();
-            enableFields();
+            prepareFormForBatlle();
         }
+        private void prepareFormForBatlle()
+        {
+            enableFields();
+            Rotation.Enabled = false;
+            Rotation.Visible = false;
+            tableLayoutPanel3.RowStyles[4].Height = 0;
+            foreach (var textbox in tableLayoutPanel3.Controls.OfType<TextBox>())
+            {
+                textbox.Text = "Rdy!";
+            }
+        }
+
         private void enableFields()
         {
-            foreach (var button in this.tableLayoutPanel1.Controls.OfType<Button>())
+            foreach (var button in tableLayoutPanel1.Controls.OfType<Button>())
             {
                 button.Enabled = true;
             }
-            foreach (var button in this.tableLayoutPanel3.Controls.OfType<Button>())
+            foreach (var button in tableLayoutPanel3.Controls.OfType<Button>())
             {
                 button.Enabled = true;
             }
-            foreach (var button in this.tableLayoutPanel4.Controls.OfType<Button>())
+            foreach (var button in tableLayoutPanel4.Controls.OfType<Button>())
             {
                 button.Enabled = false;
             }
@@ -68,7 +80,7 @@ namespace Lodaky
 
         private void updateField()
         {
-            foreach (var button in this.tableLayoutPanel4.Controls.OfType<Button>())
+            foreach (var button in tableLayoutPanel4.Controls.OfType<Button>())
             {
                 Position pos = getButtonPosition(button);
                 
@@ -77,7 +89,7 @@ namespace Lodaky
                     button.Text = "X";
                 }
             }
-            foreach (var button in this.tableLayoutPanel1.Controls.OfType<Button>())
+            foreach (var button in tableLayoutPanel1.Controls.OfType<Button>())
             {
                 Position pos = getButtonPosition(button);
                 if (game.enemysField[pos.X, pos.Y] != FieldTypes.SEA)
@@ -95,21 +107,25 @@ namespace Lodaky
                     var bb = tableLayoutPanel3.Controls.OfType<Button>().Where(r => r.Name == "BBButton");
                     Button bbbutt = bb.ToList()[0];
                     bbbutt.Enabled = false;
+                    bbtxt.Text = "0";
                     break;
                 case FieldTypes.CV:
                     var cv = tableLayoutPanel3.Controls.OfType<Button>().Where(r => r.Name == "CVButton");
                     Button cvbutt = cv.ToList()[0];
                     cvbutt.Enabled = false;
+                    cvtxt.Text = "0";
                     break;
                 case FieldTypes.CA:
                     var ca = tableLayoutPanel3.Controls.OfType<Button>().Where(r => r.Name == "CAButton");
                     Button cabutt = ca.ToList()[0];
                     cabutt.Enabled = false;
+                    catxt.Text = "0";
                     break;
                 case FieldTypes.DD:
                     var dd = tableLayoutPanel3.Controls.OfType<Button>().Where(r => r.Name == "DDButton");
                     Button ddbutt = dd.ToList()[0];
                     ddbutt.Enabled = false;
+                    ddtxt.Text = "0";
                     break;
             }
             game.chosenShip = FieldTypes.SEA;
