@@ -38,6 +38,10 @@ namespace Lodaky
             }
             return true;
         }
+        public override void isHitted(int index)
+        {
+
+        }
         public override void attack(int x, int y)
         {
             throw new NotImplementedException();

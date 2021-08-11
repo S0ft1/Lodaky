@@ -20,8 +20,13 @@ namespace Lodaky
         protected bool rotated = false;
 
 
+
         public virtual bool checkIfDestroyed()
         {
+            if (destroyed)
+            {
+                return true;
+            }
             for(int i = 0; i < hitPoints.Length; ++i)
             {
                 if (hitPoints[i])
@@ -29,17 +34,26 @@ namespace Lodaky
                     return false;
                 }
             }
+            Console.WriteLine(type + "destroyed");
+            destroyed = true;
             return true;
         }
 
+        public virtual void isHitted(int index)
+        {
+            hitPoints[index] = false;
+        }
         public FieldTypes getType()
         {
             return type;
         }
-        public void setPosition(Position _position)
+        public bool getRotation()
         {
-            position.X = _position.X;
-            position.Y = _position.Y;
+            return rotated;
+        }
+        public Position getPosition()
+        {
+            return position;
         }
         public ushort getLenght()
         {

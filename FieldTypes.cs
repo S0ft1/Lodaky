@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Lodaky
 {
-    public enum FieldTypes { SEA, SPOT,CV, BB, DD, CA };
+    public enum FieldTypes { SEA, SPOT,CV, BB, DD, CA, FIRE};
 }

@@ -49,6 +49,7 @@ namespace Lodaky
             game.AiTurn = true;
             game.aiPlanning();
             prepareFormForBatlle();
+            game.AiTurn = false;
         }
         private void prepareFormForBatlle()
         {

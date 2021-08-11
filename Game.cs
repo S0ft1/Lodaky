@@ -29,7 +29,7 @@ namespace Lodaky
         private void fillUpFleets()
         {
             Position pos = new Position(0, 0);
-            allyFleet[0] = new Battleship(pos,false);
+            allyFleet[0] = new Battleship(pos, false);
             allyFleet[1] = new AircraftCarrier(pos, false);
             allyFleet[2] = new Cruiser(pos, false);
             allyFleet[3] = new Destroyer(pos, false);
@@ -354,35 +354,116 @@ namespace Lodaky
 
         public bool battleRequest(Position position)
         {
-            aiTurn = false;
             Console.WriteLine(position.X + "," + position.Y);
             if (!aiTurn)
             {
-                if (enemysField[position.X, position.Y] != FieldTypes.SEA && enemysField[position.X, position.Y] != FieldTypes.SPOT)
+                XAttacks(position, enemysField, enemyFleet);
+                if (checkFleetIfDestroyed(enemyFleet))
                 {
-                    Console.WriteLine("hit");
-                }
-                else
-                {
-                    Console.WriteLine("miss");
+                    Console.WriteLine("enemy fleet sunk");
                 }
             }
             else
             {
-                if (playersField[position.X, position.Y] != FieldTypes.SEA && playersField[position.X, position.Y] != FieldTypes.SPOT)
+                XAttacks(position, playersField, allyFleet);
+                if (checkFleetIfDestroyed(allyFleet))
                 {
-                    Console.WriteLine("hit");
+                    Console.WriteLine("ally fleet sunk");
                 }
-                else
-                {
-                    Console.WriteLine("miss");
-                }
-            }
 
-            Console.WriteLine(enemysField[position.X, position.Y]);
+            }
+            aiTurn = !aiTurn;
+            //Console.WriteLine(enemysField[position.X, position.Y]);
             return false;
         }
+
+        private ushort getHitIndex(FieldTypes type)
+        {
+            ushort hitIndex = 0;
+            switch (type)
+            {
+                case FieldTypes.BB:
+                    hitIndex = 0;
+                    break;
+
+                case FieldTypes.CV:
+                    hitIndex = 1;
+                    break;
+
+                case FieldTypes.CA:
+                    hitIndex = 2;
+                    break;
+
+                case FieldTypes.DD:
+                    hitIndex = 3;
+                    break;
+            }
+            return hitIndex;
+        }
+        private bool checkFleetIfDestroyed(Ship[] fleet)
+        {
+            int counter = 0;
+            foreach (Ship ship in fleet)
+            {
+                if (ship.checkIfDestroyed())
+                {                   
+                    ++counter;
+                }
+            }
+            return counter == 4;
+        }
+        private void checkHits(Position position, ushort hitIndex, Ship[] fleet)
+        {
+            if (fleet[hitIndex].getRotation())
+            {
+                checkRotatedHits(position, hitIndex, fleet);
+            }
+
+            else
+            {
+                checkNonRotatedHits(position, hitIndex, fleet);
+            }
+        }
+        private void checkRotatedHits(Position position, ushort hitIndex, Ship[] fleet)
+        {
+            for (int i = 0; i < fleet[hitIndex].getLenght(); ++i)
+            {
+
+                if (fleet[hitIndex].getPosition().Y - i == position.Y)
+                {
+                    fleet[hitIndex].isHitted(i);
+                }
+            }
+        }
+        private void checkNonRotatedHits(Position position, ushort hitIndex, Ship[] fleet)
+        {
+            for (int i = 0; i < fleet[hitIndex].getLenght(); ++i)
+            {
+                if (fleet[hitIndex].getPosition().X + i == position.X)
+                {
+                    fleet[hitIndex].isHitted(i);
+                }
+            }
+        }
+
+        private void XAttacks(Position position, FieldTypes[,] tempField, Ship[] fleet)
+        {
+
+            ushort hitIndex;
+            if (tempField[position.X, position.Y] != FieldTypes.SEA && tempField[position.X, position.Y] != FieldTypes.SPOT)
+            {
+                Console.WriteLine("hit");
+                hitIndex = getHitIndex(tempField[position.X, position.Y]);
+                checkHits(position, hitIndex, fleet);
+
+            }
+            else
+            {
+                Console.WriteLine("miss");
+            }
+        }
     }
+
 
 }
 
