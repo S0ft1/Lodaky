@@ -9,12 +9,15 @@ namespace Lodaky
 {
     class Battleship : Ship
     {
-        public Battleship()
+        public Battleship(Position _position, bool _rotation)
         { 
             Lenght = 4;
             type = FieldTypes.BB;
             baseReloadTime = 3;
             reloadTime = baseReloadTime;
+            hitPoints = Enumerable.Repeat<bool>(true, Lenght).ToArray();
+            rotated = _rotation;
+            position = _position;
         }
 
         public override void attack(int x, int y)

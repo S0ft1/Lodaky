@@ -11,11 +11,26 @@ namespace Lodaky
     {
         protected ushort Lenght;
         protected Image image;
-        protected Position position = new Position(0, 0);
+        protected Position position;
         protected bool destroyed = false;
         protected FieldTypes type;
         protected ushort baseReloadTime;
         protected ushort reloadTime;
+        protected bool[] hitPoints;
+        protected bool rotated = false;
+
+
+        public virtual bool checkIfDestroyed()
+        {
+            for(int i = 0; i < hitPoints.Length; ++i)
+            {
+                if (hitPoints[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         public FieldTypes getType()
         {

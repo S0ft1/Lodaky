@@ -28,14 +28,15 @@ namespace Lodaky
         }
         private void fillUpFleets()
         {
-            allyFleet[0] = new Battleship();
-            allyFleet[1] = new AircraftCarrier();
-            allyFleet[2] = new Cruiser();
-            allyFleet[3] = new Destroyer();
-            enemyFleet[0] = new Battleship();
-            enemyFleet[1] = new AircraftCarrier();
-            enemyFleet[2] = new Cruiser();
-            enemyFleet[3] = new Destroyer();
+            Position pos = new Position(0, 0);
+            allyFleet[0] = new Battleship(pos,false);
+            allyFleet[1] = new AircraftCarrier(pos, false);
+            allyFleet[2] = new Cruiser(pos, false);
+            allyFleet[3] = new Destroyer(pos, false);
+            enemyFleet[0] = new Battleship(pos, false);
+            enemyFleet[1] = new AircraftCarrier(pos, false);
+            enemyFleet[2] = new Cruiser(pos, false);
+            enemyFleet[3] = new Destroyer(pos, false);
         }
         #region planning
         private Position aiPlanningController()
@@ -187,6 +188,7 @@ namespace Lodaky
             if (possiblePosition(position, shipLenght, tempField))
             {
                 drawShip(tempField, position, shipLenght);
+                createShip(position);
                 return true;
             }
             else
@@ -196,7 +198,54 @@ namespace Lodaky
         }
 
 
+        private void createShip(Position position)
+        {
+            if (!aiTurn)
+            {
+                switch (chosenShip)
+                {
+                    case FieldTypes.BB:
+                        allyFleet[0] = new Battleship(position, rotation);
+                        break;
 
+                    case FieldTypes.CV:
+                        allyFleet[1] = new AircraftCarrier(position, rotation);
+                        break;
+
+                    case FieldTypes.CA:
+                        allyFleet[2] = new Cruiser(position, rotation);
+                        break;
+
+                    case FieldTypes.DD:
+                        allyFleet[3] = new Destroyer(position, rotation);
+                        break;
+
+                }
+
+            }
+            else
+            {
+                switch (chosenShip)
+                {
+                    case FieldTypes.BB:
+                        enemyFleet[0] = new Battleship(position, rotation);
+                        break;
+
+                    case FieldTypes.CV:
+                        enemyFleet[1] = new AircraftCarrier(position, rotation);
+                        break;
+
+                    case FieldTypes.CA:
+                        enemyFleet[2] = new Cruiser(position, rotation);
+                        break;
+
+                    case FieldTypes.DD:
+                        enemyFleet[3] = new Destroyer(position, rotation);
+                        break;
+
+                }
+            }
+        }
         private bool placeRotatedShip(Position position, ushort shipLenght)
         {
             FieldTypes[,] tempField = playersField;
@@ -213,6 +262,7 @@ namespace Lodaky
             {
 
                 drawRotatedShip(tempField, position, shipLenght);
+                createShip(position);
                 return true;
             }
             else
@@ -308,10 +358,9 @@ namespace Lodaky
             Console.WriteLine(position.X + "," + position.Y);
             if (!aiTurn)
             {
-                if(enemysField[position.X,position.Y] != FieldTypes.SEA && enemysField[position.X, position.Y] != FieldTypes.SPOT)
+                if (enemysField[position.X, position.Y] != FieldTypes.SEA && enemysField[position.X, position.Y] != FieldTypes.SPOT)
                 {
                     Console.WriteLine("hit");
-
                 }
                 else
                 {
@@ -329,8 +378,8 @@ namespace Lodaky
                     Console.WriteLine("miss");
                 }
             }
-            
-            Console.WriteLine(enemysField[position.X,position.Y]);
+
+            Console.WriteLine(enemysField[position.X, position.Y]);
             return false;
         }
     }

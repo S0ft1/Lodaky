@@ -8,12 +8,15 @@ namespace Lodaky
 {
     class Cruiser : Ship
     {
-        public Cruiser()
+        public Cruiser(Position _position, bool _rotation)
         {
             Lenght = 3;
             type = FieldTypes.CA;
-            baseReloadTime = 2;
+            baseReloadTime = 1;
             reloadTime = baseReloadTime;
+            hitPoints = Enumerable.Repeat<bool>(true, Lenght).ToArray();
+            rotated = _rotation;
+            position = _position;
         }
         public override void attack(int x, int y)
         {
