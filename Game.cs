@@ -61,7 +61,7 @@ namespace Lodaky
                 while (!placeShip(pos))
                 {
                     pos = aiPlanningController();
-                    Console.WriteLine("AI failed to place a ship");
+                    Console.WriteLine("AI failed to place a shipqqq");
                 };
             }
         }
