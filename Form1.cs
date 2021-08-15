@@ -13,6 +13,11 @@ namespace Lodaky
     public partial class Form1 : Form
     {
         Game game = new Game();
+        private int xd = 1;
+        Image bkg = Image.FromFile(@"..\..\pics\USN\ca1.jpg");       
+        //btn.BackgroundImage = bkg;
+        //zvetsin buttonky a zmensit obrazek
+
         public Form1()
         {
             InitializeComponent();
@@ -22,6 +27,9 @@ namespace Lodaky
         {
             Button btn = (Button)sender;
             requestManaging(btn);
+            bkg = Image.FromFile(@"..\..\pics\USN\ca"+xd+".jpg");
+            btn.BackgroundImage = bkg;
+            xd++;
         }
 
         private void requestManaging(Button btn)
