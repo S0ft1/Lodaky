@@ -40,7 +40,7 @@ namespace Lodaky
         }
         public override void isHitted(int index)
         {
-
+            //dodelat
         }
         public override void attack(int x, int y)
         {
