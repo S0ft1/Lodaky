@@ -36,13 +36,21 @@ namespace Lodaky
                     return false;
                 }
             }
+            Console.WriteLine(type + " destroyed");
             return true;
         }
-        public override void isHitted(int index)
+        public override void isHitted(int index,bool lower)
         {
-            //dodelat
+            if (lower)
+            {
+                cvHitPoints[index, 1] = false;
+            }
+            else
+            {
+                cvHitPoints[index, 0] = false;
+            }
         }
-        public override void attack(int x, int y)
+        public override void attack(Position _position)
         {
             throw new NotImplementedException();
         }

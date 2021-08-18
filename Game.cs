@@ -406,7 +406,7 @@ namespace Lodaky
             foreach (Ship ship in fleet)
             {
                 if (ship.checkIfDestroyed())
-                {                   
+                {
                     ++counter;
                 }
             }
@@ -428,21 +428,53 @@ namespace Lodaky
         {
             for (int i = 0; i < fleet[hitIndex].getLenght(); ++i)
             {
-
-                if (fleet[hitIndex].getPosition().Y - i == position.Y)
+                //trosku hnus
+                if (hitIndex == 1)
                 {
-                    fleet[hitIndex].isHitted(i);
+
+                    if (fleet[hitIndex].getPosition().Y - i == position.Y && fleet[hitIndex].getPosition().X + 1 == position.X)
+                    {
+                        fleet[hitIndex].isHitted(i, true);
+                    }
+                    else if (fleet[hitIndex].getPosition().Y - i == position.Y)
+                    {
+                        fleet[hitIndex].isHitted(i, false);
+                    }
                 }
+                else
+                {
+                    if (fleet[hitIndex].getPosition().Y - i == position.Y)
+                    {
+                        fleet[hitIndex].isHitted(i, false);
+                    }
+                }
+               
             }
         }
         private void checkNonRotatedHits(Position position, ushort hitIndex, Ship[] fleet)
         {
             for (int i = 0; i < fleet[hitIndex].getLenght(); ++i)
             {
-                if (fleet[hitIndex].getPosition().X + i == position.X)
+                if (hitIndex == 1)
                 {
-                    fleet[hitIndex].isHitted(i);
+                    if (fleet[hitIndex].getPosition().X + i == position.X && fleet[hitIndex].getPosition().Y + 1 == position.Y)
+                    {
+                        fleet[hitIndex].isHitted(i, true);
+                    }
+                    else if (fleet[hitIndex].getPosition().X + i == position.X)
+                    {
+                        fleet[hitIndex].isHitted(i, false);
+                    }
+
                 }
+                else
+                {
+                    if (fleet[hitIndex].getPosition().X + i == position.X)
+                    {
+                        fleet[hitIndex].isHitted(i, false);
+                    }
+                }
+
             }
         }
 

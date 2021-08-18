@@ -39,7 +39,7 @@ namespace Lodaky
             return true;
         }
 
-        public virtual void isHitted(int index)
+        public virtual void isHitted(int index,bool cv)
         {
             hitPoints[index] = false;
         }
@@ -60,6 +60,6 @@ namespace Lodaky
             return Lenght;
         }
 
-        public abstract void attack(int x, int y);
+        public abstract void attack(Position _position);
     }
 }

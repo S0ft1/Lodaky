@@ -27,9 +27,9 @@ namespace Lodaky
         {
             Button btn = (Button)sender;
             requestManaging(btn);
-            bkg = Image.FromFile(@"..\..\pics\USN\ca"+xd+".jpg");
-            btn.BackgroundImage = bkg;
-            xd++;
+           // bkg = Image.FromFile(@"..\..\pics\USN\ca"+xd+".jpg");
+          //  btn.BackgroundImage = bkg;
+          //  xd++;
         }
 
         private void requestManaging(Button btn)
@@ -144,9 +144,9 @@ namespace Lodaky
         {
             //hnus
             Position btnPosition = new Position(0,0);
-            btnPosition.X = btn.Location.X - 4;
+            btnPosition.X = btn.Location.X-1;
             btnPosition.X = (btnPosition.X / 64);
-            btnPosition.Y = btn.Location.Y - 4;
+            btnPosition.Y = btn.Location.Y;
             btnPosition.Y = (btnPosition.Y / 59);
             return btnPosition;
         }

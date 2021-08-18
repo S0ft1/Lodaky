@@ -18,7 +18,7 @@ namespace Lodaky
             rotated = _rotation;
             position = _position;
         }
-        public override void attack(int x, int y)
+        public override void attack(Position _position)
         {
             throw new NotImplementedException();
         }
