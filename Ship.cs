@@ -60,6 +60,6 @@ namespace Lodaky
             return Lenght;
         }
 
-        public abstract void attack(Position _position);
+        public abstract Position[] attack(Position _position,bool _rotation);
     }
 }

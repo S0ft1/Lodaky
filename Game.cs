@@ -9,8 +9,8 @@ namespace Lodaky
     class Game
     {
         public GameStates currentGameState = GameStates.PLANNING;
-        public FieldTypes[,] playersField = new FieldTypes[10, 10];
-        public FieldTypes[,] enemysField = new FieldTypes[10, 10];
+        public Field[,] playersField = new Field[10, 10];
+        public Field[,] enemysField = new Field[10, 10];
         public FieldTypes chosenShip = FieldTypes.SEA;
         private ushort numberOfShips = 4;
         private Ship[] allyFleet = new Ship[4];
@@ -25,6 +25,7 @@ namespace Lodaky
         public Game()
         {
             fillUpFleets();
+            fillUpFields();
         }
         private void fillUpFleets()
         {
@@ -38,12 +39,22 @@ namespace Lodaky
             enemyFleet[2] = new Cruiser(pos, false);
             enemyFleet[3] = new Destroyer(pos, false);
         }
+
+        private void fillUpFields()
+        {
+            for (int i = 0; i < rowLenght; ++i)
+            {
+                for (int j = 0; j < rowLenght; ++j)
+                {
+                    playersField[i, j] = new Field(FieldTypes.SEA);
+                    enemysField[i, j] = new Field(FieldTypes.SEA);
+                }
+            }
+        }
         #region planning
         private Position aiPlanningController()
         {
-            Position pos = new Position(0, 0);
-            pos.X = ai.getRndPos();
-            pos.Y = ai.getRndPos();
+            Position pos = ai.getRndPos();
             if (ai.getAiRotation())
             {
                 rotation = !rotation;
@@ -142,40 +153,40 @@ namespace Lodaky
             return position;
         }
 
-        private void drawShip(FieldTypes[,] tempField, Position position, ushort shipLenght)
+        private void drawShip(Field[,] tempField, Position position, ushort shipLenght)
         {
             for (int i = 0; i < shipLenght; ++i)
             {
                 if (chosenShip != FieldTypes.CV)
                 {
-                    tempField[position.X + i, position.Y] = chosenShip;
+                    tempField[position.X + i, position.Y].type = chosenShip;
                 }
                 else
                 {
-                    tempField[position.X + i, position.Y] = chosenShip;
-                    tempField[position.X + i, position.Y + 1] = chosenShip;
+                    tempField[position.X + i, position.Y].type = chosenShip;
+                    tempField[position.X + i, position.Y + 1].type = chosenShip;
                 }
             }
         }
-        private void drawRotatedShip(FieldTypes[,] tempField, Position position, ushort shipLenght)
+        private void drawRotatedShip(Field[,] tempField, Position position, ushort shipLenght)
         {
             for (int i = 0; i < shipLenght; ++i)
             {
                 if (chosenShip != FieldTypes.CV)
                 {
-                    tempField[position.X, position.Y - i] = chosenShip;
+                    tempField[position.X, position.Y - i].type = chosenShip;
                 }
                 else
                 {
-                    tempField[position.X, position.Y - i] = chosenShip;
-                    tempField[position.X + 1, position.Y - i] = chosenShip;
+                    tempField[position.X, position.Y - i].type = chosenShip;
+                    tempField[position.X + 1, position.Y - i].type = chosenShip;
                 }
             }
         }
         private bool placeNonRotatedShip(Position position, ushort shipLenght)
         {
 
-            FieldTypes[,] tempField = playersField;
+            Field[,] tempField = playersField;
             if (aiTurn)
             {
                 tempField = enemysField;
@@ -248,7 +259,7 @@ namespace Lodaky
         }
         private bool placeRotatedShip(Position position, ushort shipLenght)
         {
-            FieldTypes[,] tempField = playersField;
+            Field[,] tempField = playersField;
             if (aiTurn)
             {
                 tempField = enemysField;
@@ -271,7 +282,7 @@ namespace Lodaky
             }
         }
 
-        private bool possiblePosition(Position position, ushort shipLenght, FieldTypes[,] tempField)
+        private bool possiblePosition(Position position, ushort shipLenght, Field[,] tempField)
         {
             if (!rotation)
             {
@@ -279,7 +290,7 @@ namespace Lodaky
                 {
                     if (chosenShip == FieldTypes.CV)
                     {
-                        if (tempField[position.X + i, position.Y] != FieldTypes.SEA || tempField[position.X + i, position.Y + 1] != FieldTypes.SEA)
+                        if (tempField[position.X + i, position.Y].type != FieldTypes.SEA || tempField[position.X + i, position.Y + 1].type != FieldTypes.SEA)
                         {
 
                             selectCorrectField(tempField);
@@ -288,7 +299,7 @@ namespace Lodaky
                     }
                     else
                     {
-                        if (tempField[position.X + i, position.Y] != FieldTypes.SEA)
+                        if (tempField[position.X + i, position.Y].type != FieldTypes.SEA)
                         {
 
                             selectCorrectField(tempField);
@@ -303,7 +314,7 @@ namespace Lodaky
                 {
                     if (chosenShip == FieldTypes.CV)
                     {
-                        if (tempField[position.X, position.Y - i] != FieldTypes.SEA || tempField[position.X + 1, position.Y - i] != FieldTypes.SEA)
+                        if (tempField[position.X, position.Y - i].type != FieldTypes.SEA || tempField[position.X + 1, position.Y - i].type != FieldTypes.SEA)
                         {
                             selectCorrectField(tempField);
                             return false;
@@ -311,7 +322,7 @@ namespace Lodaky
                     }
                     else
                     {
-                        if (tempField[position.X, position.Y - i] != FieldTypes.SEA)
+                        if (tempField[position.X, position.Y - i].type != FieldTypes.SEA)
                         {
 
                             selectCorrectField(tempField);
@@ -322,7 +333,7 @@ namespace Lodaky
             }
             return true;
         }
-        private void selectCorrectField(FieldTypes[,] tempField)
+        private void selectCorrectField(Field[,] tempField)
         {
             if (aiTurn)
             {
@@ -352,29 +363,34 @@ namespace Lodaky
         }
         #endregion
 
-        public bool battleRequest(Position position)
+        public void battleRequest(Position position)
         {
-            Console.WriteLine(position.X + "," + position.Y);
-            if (!aiTurn)
-            {
-                XAttacks(position, enemysField, enemyFleet);
-                if (checkFleetIfDestroyed(enemyFleet))
-                {
-                    Console.WriteLine("enemy fleet sunk");
-                }
-            }
-            else
-            {
-                XAttacks(position, playersField, allyFleet);
-                if (checkFleetIfDestroyed(allyFleet))
-                {
-                    Console.WriteLine("ally fleet sunk");
-                }
+            playerAttacks(position);
+            aiAttacks();
+        }
 
+        private bool playerAttacks(Position position)
+        {
+            Position[] area = chooseAttack(allyFleet, position);
+            bool result = XAttacks(area, enemysField, enemyFleet);
+            if (checkFleetIfDestroyed(enemyFleet))
+            {
+                Console.WriteLine("enemy fleet sunk");
             }
-            aiTurn = !aiTurn;
-            //Console.WriteLine(enemysField[position.X, position.Y]);
-            return false;
+            return result;
+        }
+
+        private bool aiAttacks()
+        {
+            chosenShip = ai.getShip();
+            Position[] area = chooseAttack(allyFleet, ai.getRndPos());
+            bool result = XAttacks(area, playersField, allyFleet);
+            if (checkFleetIfDestroyed(allyFleet))
+            {
+                Console.WriteLine("ally fleet sunk");
+            }
+            chosenShip = FieldTypes.SEA;
+            return result;
         }
 
         private ushort getHitIndex(FieldTypes type)
@@ -424,6 +440,7 @@ namespace Lodaky
                 checkNonRotatedHits(position, hitIndex, fleet);
             }
         }
+
         private void checkRotatedHits(Position position, ushort hitIndex, Ship[] fleet)
         {
             for (int i = 0; i < fleet[hitIndex].getLenght(); ++i)
@@ -448,7 +465,7 @@ namespace Lodaky
                         fleet[hitIndex].isHitted(i, false);
                     }
                 }
-               
+
             }
         }
         private void checkNonRotatedHits(Position position, ushort hitIndex, Ship[] fleet)
@@ -478,20 +495,100 @@ namespace Lodaky
             }
         }
 
-        private void XAttacks(Position position, FieldTypes[,] tempField, Ship[] fleet)
+        private bool XAttacks(Position[] area, Field[,] tempField, Ship[] fleet)
         {
+            bool result = false;
+            switch (chosenShip)
+            {
+                case FieldTypes.BB:
+                    result = bbAttack(area, tempField, fleet);
+                    break;
 
+                case FieldTypes.CA:
+                    result = singleTarget(area[0], tempField, fleet);
+                    break;
+
+                case FieldTypes.CV:
+                    CVScout(area, tempField);
+                    result = true;
+                    break;
+
+                case FieldTypes.DD:
+                    result = ddAttack(area, tempField, fleet);
+                    break;
+            }
+            return true;
+           
+        }
+
+        private bool singleTarget(Position position, Field[,] tempField, Ship[] fleet)
+        {
+            Console.WriteLine(position.X + "," + position.Y);
             ushort hitIndex;
-            if (tempField[position.X, position.Y] != FieldTypes.SEA && tempField[position.X, position.Y] != FieldTypes.SPOT)
+            if (tempField[position.X, position.Y].type != FieldTypes.SEA)
             {
                 Console.WriteLine("hit");
-                hitIndex = getHitIndex(tempField[position.X, position.Y]);
+                hitIndex = getHitIndex(tempField[position.X, position.Y].type);
                 checkHits(position, hitIndex, fleet);
-
+                tempField[position.X, position.Y].type = FieldTypes.FIRE;
+                tempField[position.X, position.Y].spotted = true;
+                return true;
             }
             else
             {
                 Console.WriteLine("miss");
+                tempField[position.X, position.Y].spotted = true;
+                return false;
+            }
+
+        }
+
+        private bool bbAttack(Position[] area, Field[,] tempField, Ship[] fleet)
+        {
+            foreach (Position position in area)
+            {
+                singleTarget(position, tempField, fleet);
+            }
+            return true;
+        }
+        private bool CVScout(Position[] area, Field[,] tempField)
+        {
+            foreach (Position pos in area)
+            {
+                tempField[pos.X, pos.Y].spotted = true;
+            }
+            return true;
+        }
+
+        private bool ddAttack(Position[] area, Field[,] tempField, Ship[] fleet)
+        {
+            foreach (Position pos in area)
+            {
+                if (singleTarget(pos, tempField, fleet))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private Position[] chooseAttack(Ship[] fleet, Position position)
+        {
+            switch (chosenShip)
+            {
+                case FieldTypes.BB:
+                    return fleet[0].attack(position, rotation);
+
+                case FieldTypes.CV:
+                    return fleet[1].attack(position, rotation);
+
+                case FieldTypes.CA:
+                    return fleet[2].attack(position, rotation);
+
+                case FieldTypes.DD:
+                    return fleet[3].attack(position, rotation);
+                default:
+                    return new Position[0];
             }
         }
     }

@@ -46,10 +46,15 @@ namespace Lodaky
                     updateField();
                    
                 }
+                game.chosenShip = FieldTypes.SEA;
             }
             else
             {
-                game.battleRequest(getButtonPosition(btn));
+                if (game.chosenShip != FieldTypes.SEA)
+                {
+                    game.battleRequest(getButtonPosition(btn));
+                    updateField();
+                }
             }
         }
         private void aiPlanningManagement()
@@ -59,16 +64,15 @@ namespace Lodaky
             prepareFormForBatlle();
             game.AiTurn = false;
         }
+
         private void prepareFormForBatlle()
         {
             enableFields();
-            Rotation.Enabled = false;
-            Rotation.Visible = false;
-            tableLayoutPanel3.RowStyles[4].Height = 0;
             foreach (var textbox in tableLayoutPanel3.Controls.OfType<TextBox>())
             {
                 textbox.Text = "Rdy!";
             }
+            game.rotation = false;
         }
 
         private void enableFields()
@@ -92,18 +96,54 @@ namespace Lodaky
             foreach (var button in tableLayoutPanel4.Controls.OfType<Button>())
             {
                 Position pos = getButtonPosition(button);
-                
-                if (game.playersField[pos.X, pos.Y] != FieldTypes.SEA)
+
+                switch(game.playersField[pos.X, pos.Y].type)
                 {
-                    button.Text = "X";
+                    case FieldTypes.BB:
+                        button.Text = "BB";
+                        break;
+                    case FieldTypes.CV:
+                        button.Text = "CV";
+                        break;
+                    case FieldTypes.CA:
+                        button.Text = "CA";
+                        break;
+                    case FieldTypes.DD:
+                        button.Text = "DD";
+                        break;
+                    case FieldTypes.FIRE:
+                        button.Text = "FIRE";
+                        break;
+                }
+                if(game.playersField[pos.X, pos.Y].spotted && game.playersField[pos.X, pos.Y].type != FieldTypes.FIRE)
+                {
+                    button.Text = "SPOT";
                 }
             }
             foreach (var button in tableLayoutPanel1.Controls.OfType<Button>())
             {
                 Position pos = getButtonPosition(button);
-                if (game.enemysField[pos.X, pos.Y] != FieldTypes.SEA)
+                switch (game.enemysField[pos.X, pos.Y].type)
                 {
-                    button.Text = "X";
+                    case FieldTypes.BB:
+                        button.Text = "BB";
+                        break;
+                    case FieldTypes.CV:
+                        button.Text = "CV";
+                        break;
+                    case FieldTypes.CA:
+                        button.Text = "CA";
+                        break;
+                    case FieldTypes.DD:
+                        button.Text = "DD";
+                        break;
+                    case FieldTypes.FIRE:
+                        button.Text = "FIRE";
+                        break;
+                }
+                if (game.enemysField[pos.X, pos.Y].spotted&& game.enemysField[pos.X, pos.Y].type !=FieldTypes.FIRE)
+                {
+                    button.Text = "SPOT";
                 }
             }
             
@@ -142,7 +182,8 @@ namespace Lodaky
 
         private Position getButtonPosition(Button btn)
         {
-            //hnus
+            //var size = tableLayoutPanel1.Controls.OfType<Button>().ToList()[0].Size;
+            //turbohnus
             Position btnPosition = new Position(0,0);
             btnPosition.X = btn.Location.X-1;
             btnPosition.X = (btnPosition.X / 64);
@@ -171,7 +212,29 @@ namespace Lodaky
         {
             game.chooseShip(FieldTypes.DD);
         }
+        private void Form1_KeyPress(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.R:
+                    game.rotation = !game.rotation;
+                    break;
+                case Keys.B:
+                    game.chooseShip(FieldTypes.BB);
+                    break;
+                case Keys.A:
+                    game.chooseShip(FieldTypes.CV);
+                    break;
+                case Keys.C:
+                    game.chooseShip(FieldTypes.CA);
+                    break;
+                case Keys.D:
+                    game.chooseShip(FieldTypes.DD);
+                    break;
+            }          
+        }
         #endregion
+
         private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
         {
         }

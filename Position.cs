@@ -10,6 +10,10 @@ namespace Lodaky
     {
         public int X;
         public int Y;
+        public Position()
+        {
+
+        }
         public Position(int x, int y)
         {
             X = x;

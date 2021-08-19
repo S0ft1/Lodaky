@@ -50,7 +50,8 @@ namespace Lodaky
             this.SuspendLayout();
             int columnNrowCount = 10;
             EventHandler button_Click = new System.EventHandler(this.button_Click);
-
+            this.KeyPreview = true;
+            this.KeyDown += new KeyEventHandler(this.Form1_KeyPress);
 
 
 

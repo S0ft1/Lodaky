@@ -18,9 +18,9 @@ namespace Lodaky
             rotated = _rotation;
             position = _position;
         }
-        public override void attack(Position _position)
+        public override Position[] attack(Position _position, bool _rotation)
         {
-            throw new NotImplementedException();
+            return new Position[] { new Position(_position.X, _position.Y) };           
         }
     }
 }

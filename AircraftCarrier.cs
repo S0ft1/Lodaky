@@ -27,6 +27,28 @@ namespace Lodaky
                 cvHitPoints[i, 1] = true;
             }
         }
+        private Position fixedPosition(Position _position)
+        {
+            if (_position.X == 0)
+            {
+                _position.X = 1;
+            }
+            if (_position.Y == 0)
+            {
+                _position.Y = 1;
+            }
+            if (_position.X == 9)
+            {
+                _position.X = 8;
+            }
+            if (_position.Y == 9)
+            {
+                _position.Y = 8;
+            }
+            _position.X = _position.X - 1;
+            _position.Y = _position.Y - 1;
+            return _position;
+        }
         public override bool checkIfDestroyed()
         {
             for (int i = 0; i < Lenght; ++i)
@@ -50,9 +72,21 @@ namespace Lodaky
                 cvHitPoints[index, 0] = false;
             }
         }
-        public override void attack(Position _position)
+        public override Position[] attack(Position _position,bool _rotation)
         {
-            throw new NotImplementedException();
+            _position = fixedPosition(_position);
+            //dodelat checknuti hranice      
+            Position[] area = new Position[9];
+            ushort counter = 0;
+            for(int i = 0; i < 3; ++i)
+            {
+                for(int j = 0; j < 3; ++j)
+                {
+                    area[counter] = new Position(_position.X + j, _position.Y + i);
+                    ++counter;
+                }
+            }
+            return area;
         }
     }
 }
