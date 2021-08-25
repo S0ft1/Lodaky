@@ -12,8 +12,7 @@ namespace Lodaky
         {
             Lenght = 2;
             type = FieldTypes.DD;
-            baseReloadTime = 5;
-            reloadTime = baseReloadTime;
+            baseReloadTime = 6;
             hitPoints = Enumerable.Repeat<bool>(true, Lenght).ToArray();
             rotated = _rotation;
             position = _position;

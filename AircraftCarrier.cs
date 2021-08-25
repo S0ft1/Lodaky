@@ -13,8 +13,7 @@ namespace Lodaky
         {
             Lenght = 3;
             type = FieldTypes.CV;
-            baseReloadTime = 4;
-            reloadTime = baseReloadTime;
+            baseReloadTime = 7;
             fillCvHitPoints();
             rotated = _rotation;
             position = _position;
@@ -49,17 +48,21 @@ namespace Lodaky
             _position.Y = _position.Y - 1;
             return _position;
         }
-        public override bool checkIfDestroyed()
+        public override Report checkIfDestroyed()
         {
+            if (destroyed)
+            {
+                return new Report(true, false);
+            }
             for (int i = 0; i < Lenght; ++i)
             {
                 if (cvHitPoints[i, 0]|| cvHitPoints[i, 1])
                 {
-                    return false;
+                    return new Report(false,false);
                 }
             }
-            Console.WriteLine(type + " destroyed");
-            return true;
+            destroyed = true;
+            return new Report(true, true);
         }
         public override void isHitted(int index,bool lower)
         {

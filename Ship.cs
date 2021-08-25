@@ -15,28 +15,28 @@ namespace Lodaky
         protected bool destroyed = false;
         protected FieldTypes type;
         protected ushort baseReloadTime;
-        protected ushort reloadTime;
+        protected ushort reloadCooldown = 0;
         protected bool[] hitPoints;
         protected bool rotated = false;
 
 
 
-        public virtual bool checkIfDestroyed()
+        public virtual Report checkIfDestroyed()
         {
             if (destroyed)
             {
-                return true;
+                return new Report(true,false);
             }
             for(int i = 0; i < hitPoints.Length; ++i)
             {
                 if (hitPoints[i])
                 {
-                    return false;
+                    return new Report(false, false);
                 }
             }
-            Console.WriteLine(type + "destroyed");
+           // Console.WriteLine(type + "destroyed");
             destroyed = true;
-            return true;
+            return new Report(true, true);
         }
 
         public virtual void isHitted(int index,bool cv)
@@ -58,6 +58,30 @@ namespace Lodaky
         public ushort getLenght()
         {
             return Lenght;
+        }
+
+        public ushort getReloadCooldown()
+        {
+            return reloadCooldown;
+        }
+        public ushort getBaseReload()
+        {
+            return baseReloadTime;
+        }
+        public void shoot()
+        {
+            reloadCooldown = baseReloadTime;
+        }
+        public void reload()
+        {
+            if (reloadCooldown != 0)
+            {
+                --reloadCooldown;
+            }
+        }
+        public bool getDestroyed()
+        {
+            return destroyed;
         }
 
         public abstract Position[] attack(Position _position,bool _rotation);

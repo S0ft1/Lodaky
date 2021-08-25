@@ -19,7 +19,12 @@ namespace Lodaky
         }
         public FieldTypes getShip()
         {
-            switch (rd.Next(0, 4))
+            return chooseShipByIndex(rd.Next(0, 4));
+        }
+
+        public FieldTypes chooseShipByIndex(int index)
+        {
+            switch (index)
             {
                 case 0:
                     return FieldTypes.BB;
@@ -33,6 +38,21 @@ namespace Lodaky
                     return FieldTypes.SEA;
             }
         }
+        public FieldTypes chooseAttack(Ship[]fleet)
+        {
+            int randomN = 0;
+            FieldTypes chosenShip = FieldTypes.SEA;
+            while (chosenShip == FieldTypes.SEA)
+            {
+                randomN = rd.Next(0, 4);
+                if (fleet[randomN].getReloadCooldown() == 0 && !fleet[randomN].getDestroyed())
+                {
+                    chosenShip = chooseShipByIndex(randomN);
+                }
+            }
+            return chosenShip;
+        }
+
         public bool getAiRotation()
         {
             bool x = rd.Next(0, 2) == 1;
