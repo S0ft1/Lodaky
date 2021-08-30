@@ -8,6 +8,7 @@ namespace Lodaky
 {
     class Game
     {
+        #region variables
         public GameStates currentGameState = GameStates.PLANNING;
         public Field[,] playersField;
         public Field[,] enemysField;
@@ -22,8 +23,10 @@ namespace Lodaky
         private bool[] chosenShips;
         public string enemyOutput;
         public string playersOutput;
+        public bool playerHasWon = false;
         public bool AiTurn { get => aiTurn; set => aiTurn = value; }
-
+        #endregion
+        #region setup
         public Game()
         {
             numberOfShips = 4;
@@ -41,6 +44,7 @@ namespace Lodaky
             fillUpFleets();
             fillUpFields();
         }
+
         private void fillUpFleets()
         {
             Position pos = new Position(0, 0);
@@ -70,6 +74,7 @@ namespace Lodaky
                 }
             }
         }
+        #endregion
         #region planning
         private Position aiPlanningController()
         {
@@ -385,8 +390,6 @@ namespace Lodaky
                 return false;
             }
         }
-        #endregion
-
         private bool isValidShip()
         {
             switch (chosenShip)
@@ -422,6 +425,74 @@ namespace Lodaky
                     break;
             }
         }
+        #endregion
+        #region utility
+        private void fleetsReload()
+        {
+            foreach (Ship ship in allyFleet)
+            {
+                ship.reload();
+            }
+            foreach (Ship ship in enemyFleet)
+            {
+                ship.reload();
+            }
+        }
+
+        private bool hasValidAttacks(Ship[] fleet)
+        {
+            foreach (Ship ship in fleet)
+            {
+                if (!ship.getDestroyed() && ship.getReloadCooldown() == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        #endregion
+        #region attacking
+        private Position[] chooseAttack(Ship[] fleet, Position position)
+        {
+            switch (chosenShip)
+            {
+                case FieldTypes.BB:
+                    if (fleet[0].getReloadCooldown() == 0 && !fleet[0].getDestroyed())
+                    {
+                        fleet[0].shoot();
+                        return fleet[0].attack(position, rotation);
+                    }
+                    break;
+
+                case FieldTypes.CV:
+                    if (fleet[1].getReloadCooldown() == 0 && !fleet[1].getDestroyed())
+                    {
+                        fleet[1].shoot();
+                        return fleet[1].attack(position, rotation);
+                    }
+                    break;
+
+                case FieldTypes.CA:
+                    if (fleet[2].getReloadCooldown() == 0 && !fleet[2].getDestroyed())
+                    {
+                        fleet[2].shoot();
+                        return fleet[2].attack(position, rotation);
+                    }
+                    break;
+
+                case FieldTypes.DD:
+                    if (fleet[3].getReloadCooldown() == 0 && !fleet[3].getDestroyed())
+                    {
+                        fleet[3].shoot();
+                        return fleet[3].attack(position, rotation);
+                    }
+                    break;
+
+                default:
+                    return new Position[1] { new Position(-1, -1) };
+            }
+            return new Position[1] { new Position(-1, -1) };
+        }
         public void battleRequest(Position position)
         {
             AiTurn = false;
@@ -434,10 +505,13 @@ namespace Lodaky
                 }
                 if (hasValidAttacks(enemyFleet))
                 {
-                    AiTurn = true;
+                    if (playerHasWon)
+                    {
+                        return;
+                    }
+                    AiTurn = true;                  
                     aiAttacks();
                 }
-
                 fleetsReload();
             }
             if (!hasValidAttacks(allyFleet))
@@ -445,6 +519,10 @@ namespace Lodaky
                 playersOutput += "\n We are reloading all of our ships!";
                 while (!hasValidAttacks(allyFleet))
                 {
+                    if (playerHasWon)
+                    {
+                        return;
+                    }
                     if (hasValidAttacks(enemyFleet))
                     {
                         AiTurn = true;
@@ -454,7 +532,6 @@ namespace Lodaky
                     fleetsReload();
                 }
             }
-            
         }
 
         private bool playerAttacks(Position position)
@@ -468,20 +545,28 @@ namespace Lodaky
             if (checkFleetIfDestroyed(enemyFleet))
             {
                 playersOutput = "Enemy fleet sunk! The victory is ours.";
+                playerHasWon = true;
             }
             return true;
         }
 
         private bool aiAttacks()
         {
-            chosenShip = ai.chooseAttack(enemyFleet);
-            Position[] area = chooseAttack(enemyFleet, ai.getRndPos());
+            bool prevRot = rotation;
+            chosenShip = ai.chooseAttack(enemyFleet,playersField,allyFleet);
+            if(chosenShip == FieldTypes.DD)
+            {
+                rotation = ai.getAiRotation();
+            }
+            Position[] area = chooseAttack(enemyFleet, ai.getPositionToShootAt());
             bool result = XAttacks(area, playersField, allyFleet);
             if (checkFleetIfDestroyed(allyFleet))
             {
                 enemyOutput = "Ally fleet sunk! We will get them next time.";
+                playerHasWon = true;
             }
             chosenShip = FieldTypes.SEA;
+            rotation = prevRot;
             return result;
         }
 
@@ -625,7 +710,8 @@ namespace Lodaky
             return true;
 
         }
-
+        #endregion
+        #region types of attack
         private bool singleTarget(Position position, Field[,] tempField, Ship[] fleet)
         {          
             ushort hitIndex;
@@ -656,8 +742,48 @@ namespace Lodaky
             return result;
                 
         }
+        private bool bbAttack(Position[] area, Field[,] tempField, Ship[] fleet)
+        {
+            List<Position> hittedArea = new List<Position>();
+            enemyOutput = "";
+            foreach (Position position in area)
+            {
+                if (singleTarget(position, tempField, fleet))
+                {
+                    hittedArea.Add(position);                  
+                }
+            }
+            bbMessage(hittedArea,tempField);
+            return true;
+        }
+        private bool CVScout(Position[] area, Field[,] tempField)
+        {
+            foreach (Position pos in area)
+            {
+                tempField[pos.X, pos.Y].spotted = true;
+            }
+            cvMessage();
+            return true;
+        }
 
-        private void caMessage(bool result,Position position, Field[,] tempField)
+        private bool ddAttack(Position[] area, Field[,] tempField, Ship[] fleet)
+        {
+            Position hittedPosition = new Position(-1,-1);
+            foreach (Position pos in area)
+            {
+                if (singleTarget(pos, tempField, fleet))
+                {
+                    hittedPosition = pos;
+                    break;
+                }
+            }
+            ddMessage(area, tempField, fleet, hittedPosition);
+            return hittedPosition.X != -1;
+        }
+
+        #endregion
+        #region messages
+        private void caMessage(bool result, Position position, Field[,] tempField)
         {
             if (result)
             {
@@ -682,30 +808,14 @@ namespace Lodaky
                 }
             }
         }
-
-        private bool bbAttack(Position[] area, Field[,] tempField, Ship[] fleet)
+        private void bbMessage(List<Position> hittedArea, Field[,] tempField)
         {
-            List<Position> hittedArea = new List<Position>();
-            enemyOutput = "";
-            foreach (Position position in area)
-            {
-                if (singleTarget(position, tempField, fleet))
-                {
-                    hittedArea.Add(position);                  
-                }
-            }
-            bbMessage(hittedArea,tempField);
-            return true;
-        }
 
-        private void bbMessage(List<Position> hittedArea,Field[,] tempField)
-        {
-           
             if (hittedArea.Count == 0)
             {
                 if (aiTurn)
                 {
-                    enemyOutput= "The enemy missed their Battleship salvo!";
+                    enemyOutput = "The enemy missed their Battleship salvo!";
                 }
                 else
                 {
@@ -721,19 +831,19 @@ namespace Lodaky
             {
                 playersOutput = "We have hit an enemy warship at";
             }
-           
-           
+
+
             foreach (Position position in hittedArea)
             {
                 if (aiTurn)
                 {
-                    enemyOutput += tempField[position.X, position.Y].type.ToString() + "at" + position.X + "," + position.Y+" ";
+                    enemyOutput += tempField[position.X, position.Y].type.ToString() + "at" + position.X + "," + position.Y + " ";
                 }
                 else
                 {
-                    playersOutput +=  position.X + "," + position.Y + " ";
+                    playersOutput += position.X + "," + position.Y + " ";
                 }
-               
+
             }
             if (aiTurn)
             {
@@ -743,20 +853,9 @@ namespace Lodaky
             {
                 playersOutput += "!";
             }
-           
-            
-        }
 
-        private bool CVScout(Position[] area, Field[,] tempField)
-        {
-            foreach (Position pos in area)
-            {
-                tempField[pos.X, pos.Y].spotted = true;
-            }
-            cvMessage();
-            return true;
-        }
 
+        }
         private void cvMessage()
         {
 
@@ -769,23 +868,7 @@ namespace Lodaky
                 playersOutput = "We have scoutted enemy position.";
             }
         }
-
-        private bool ddAttack(Position[] area, Field[,] tempField, Ship[] fleet)
-        {
-            Position hittedPosition = new Position(-1,-1);
-            foreach (Position pos in area)
-            {
-                if (singleTarget(pos, tempField, fleet))
-                {
-                    hittedPosition = pos;
-                    break;
-                }
-            }
-            ddMessage(area, tempField, fleet, hittedPosition);
-            return hittedPosition.X != -1;
-        }
-
-        private void ddMessage(Position[] area, Field[,] tempField, Ship[] fleet,Position hittedPosition)
+        private void ddMessage(Position[] area, Field[,] tempField, Ship[] fleet, Position hittedPosition)
         {
             if (hittedPosition.X != -1)
             {
@@ -819,71 +902,8 @@ namespace Lodaky
             }
 
         }
-        private Position[] chooseAttack(Ship[] fleet, Position position)
-        {
-            switch (chosenShip)
-            {
-                case FieldTypes.BB:
-                    if (fleet[0].getReloadCooldown() == 0 && !fleet[0].getDestroyed())
-                    {
-                        fleet[0].shoot();
-                        return fleet[0].attack(position, rotation);
-                    }
-                    break;
-
-                case FieldTypes.CV:
-                    if (fleet[1].getReloadCooldown() == 0 && !fleet[1].getDestroyed())
-                    {
-                        fleet[1].shoot();
-                        return fleet[1].attack(position, rotation);
-                    }
-                    break;
-
-                case FieldTypes.CA:
-                    if (fleet[2].getReloadCooldown() == 0 && !fleet[2].getDestroyed())
-                    {
-                        fleet[2].shoot();
-                        return fleet[2].attack(position, rotation);
-                    }
-                    break;
-
-                case FieldTypes.DD:
-                    if (fleet[3].getReloadCooldown() == 0 && !fleet[3].getDestroyed())
-                    {
-                        fleet[3].shoot();
-                        return fleet[3].attack(position, rotation);
-                    }
-                    break;
-
-                default:
-                    return new Position[1] { new Position(-1, -1) };
-            }
-            return new Position[1] { new Position(-1, -1) };
-        }
-
-        private void fleetsReload()
-        {
-            foreach (Ship ship in allyFleet)
-            {
-                ship.reload();
-            }
-            foreach (Ship ship in enemyFleet)
-            {
-                ship.reload();
-            }
-        }
-
-        private bool hasValidAttacks(Ship[] fleet)
-        {
-            foreach (Ship ship in fleet)
-            {
-                if (!ship.getDestroyed() && ship.getReloadCooldown() == 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        #endregion
+       
     }
 }
 

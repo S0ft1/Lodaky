@@ -26,6 +26,7 @@ namespace Lodaky
 
         private void button_Click(object sender, EventArgs e)
         {
+           
             Button btn = (Button)sender;
             requestManaging(btn);
            // bkg = Image.FromFile(@"..\..\pics\USN\ca"+xd+".jpg");
@@ -38,26 +39,11 @@ namespace Lodaky
 
             if (game.currentGameState == GameStates.PLANNING)
             {
-                if (game.planningRequest(getButtonPosition(btn)))
-                {
-                    disableButtons();
-                    if (game.currentGameState != GameStates.PLANNING)
-                    {
-                        aiPlanningManagement();
-                    }
-                    updateField();
-                   
-                }
-                game.chosenShip = FieldTypes.SEA;
+                planningRequest(btn);
             }
             else
             {
-                if (game.chosenShip != FieldTypes.SEA)
-                {
-                    game.battleRequest(getButtonPosition(btn));
-                    updateField();
-                }
-                updateReload();
+                battleRequest(btn);
             }
         }
 
@@ -69,6 +55,37 @@ namespace Lodaky
             game.AiTurn = false;
         }
 
+        private void planningRequest(Button btn)
+        {
+            if (game.planningRequest(getButtonPosition(btn)))
+            {
+                disableButtons();
+                if (game.currentGameState != GameStates.PLANNING)
+                {
+                    aiPlanningManagement();
+                }
+                updateField();
+
+            }
+            game.chosenShip = FieldTypes.SEA;
+        }
+
+        private void battleRequest(Button btn)
+        {
+            if (game.chosenShip != FieldTypes.SEA)
+            {
+                game.battleRequest(getButtonPosition(btn));
+                updateField();
+                if (game.playerHasWon)
+                {
+                    this.output.Invalidate();
+                    this.output.Update();
+                    System.Threading.Thread.Sleep(3000);
+                    Application.Exit();
+                }
+            }
+            updateReload();
+        }
         private void updateReload()
         {
             TextBox[] reloadButtons = getReloadButtons();
@@ -95,8 +112,12 @@ namespace Lodaky
             ushort counter = 0;
             foreach (var textbox in tableLayoutPanel3.Controls.OfType<TextBox>())
             {
-                reloadButtons[counter] = textbox;
-                ++counter;
+                if (counter < 4)
+                {
+                    reloadButtons[counter] = textbox;
+                    ++counter;
+
+                }
             }
             return reloadButtons;
         }
@@ -124,6 +145,7 @@ namespace Lodaky
             foreach (var button in tableLayoutPanel4.Controls.OfType<Button>())
             {
                 button.Enabled = false;
+                button.ForeColor = System.Drawing.Color.Red;
             }
         }
 
@@ -151,6 +173,8 @@ namespace Lodaky
                 }
                 ++counter;
             }
+            TextBox rotbox = tableLayoutPanel3.Controls.OfType<TextBox>().Where(r => r.Name == "rottxt").ToList()[0];
+            rotbox.Text = game.rotation ? "|" : "--";         
             output.Text = game.playersOutput;
             output2.Text = game.enemyOutput;
         }
@@ -265,6 +289,8 @@ namespace Lodaky
             {
                 case Keys.R:
                     game.rotation = !game.rotation;
+                    TextBox rotbox = tableLayoutPanel3.Controls.OfType<TextBox>().Where(r => r.Name == "rottxt").ToList()[0];
+                    rotbox.Text = game.rotation ? "|" : "--";
                     break;
                 case Keys.B:
                     game.chooseShip(FieldTypes.BB);

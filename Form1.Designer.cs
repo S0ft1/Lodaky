@@ -23,6 +23,7 @@ namespace Lodaky
                 components.Dispose();
             }
             base.Dispose(disposing);
+
         }
 
         #region Windows Form Designer generated code
@@ -47,6 +48,7 @@ namespace Lodaky
             this.cvtxt = new System.Windows.Forms.TextBox();
             this.catxt = new System.Windows.Forms.TextBox();
             this.ddtxt = new System.Windows.Forms.TextBox();
+            this.rottxt = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -109,7 +111,7 @@ namespace Lodaky
             {
                 button.Click += button_Click;
                 button.AutoSize = true;
-
+                button.ForeColor = System.Drawing.Color.Red;
                 button.BackColor = System.Drawing.SystemColors.MenuHighlight;
                 button.Dock = System.Windows.Forms.DockStyle.Fill;
                 button.FlatAppearance.BorderColor = System.Drawing.SystemColors.Highlight;
@@ -163,6 +165,7 @@ namespace Lodaky
                 button.Location = new System.Drawing.Point(0, 0);
                 button.Margin = new Padding(0, 0, 0, 0);
                 button.Name = "button1";
+                button.ForeColor = System.Drawing.Color.Red;
                 button.BackgroundImage = seaImage;
                 //button.Size = new System.Drawing.Size(100,100);
                 button.Size = new System.Drawing.Size(65, 60);
@@ -190,6 +193,7 @@ namespace Lodaky
             this.tableLayoutPanel3.Controls.Add(this.cvtxt, 1, 1);
             this.tableLayoutPanel3.Controls.Add(this.catxt, 1, 2);
             this.tableLayoutPanel3.Controls.Add(this.ddtxt, 1, 3);
+            this.tableLayoutPanel3.Controls.Add(this.rottxt, 1, 4);
             this.tableLayoutPanel3.Location = new System.Drawing.Point(680, 60);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 5;
@@ -323,6 +327,16 @@ namespace Lodaky
             this.ddtxt.ForeColor = System.Drawing.Color.Black;
             this.ddtxt.ReadOnly = true;
 
+            this.rottxt.Text = "-";
+            this.rottxt.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rottxt.AutoSize = true;
+            this.rottxt.TextAlign = HorizontalAlignment.Center;
+            this.rottxt.Anchor = AnchorStyles.None;
+            this.rottxt.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.rottxt.BorderStyle = BorderStyle.None;
+            this.rottxt.ForeColor = System.Drawing.Color.Black;
+            this.rottxt.ReadOnly = true;
+            this.rottxt.Name = "rottxt";
             // 
             // Form1
             // 
@@ -355,6 +369,7 @@ namespace Lodaky
         private TextBox cvtxt;
         private TextBox catxt;
         private TextBox ddtxt;
+        private TextBox rottxt;
         private Button BBButton;
         private Button CVButton;
         private Button CAButton;
@@ -362,6 +377,7 @@ namespace Lodaky
         private Button Rotation;
         private TextBox output;
         private TextBox output2;
+
     }
 }
 
