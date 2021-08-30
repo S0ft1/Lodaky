@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Lodaky
 {
-    public enum GameStates { PLANNING, PLAYER, ENEMY, BB_SHOT, CV_SHOT, DD_SHOT, CA_SHOT };
+    public enum GameStates { PLANNING, PLAYER, ENEMY };
 }
