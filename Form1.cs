@@ -13,11 +13,11 @@ namespace Lodaky
     public partial class Form1 : Form
     {
         Game game = new Game();
-        Image fireImage = Image.FromFile(@"..\..\pics\fire.png");
+       /* Image fireImage = Image.FromFile(@"..\..\pics\fire.png");
         Image fogImage = Image.FromFile(@"..\..\pics\fog.png");
         Image seaImage = Image.FromFile(@"..\..\pics\sea.png");
         Image background = Image.FromFile(@"..\..\pics\background.jpg");
-
+       */
         public Form1()
         {
             InitializeComponent();
