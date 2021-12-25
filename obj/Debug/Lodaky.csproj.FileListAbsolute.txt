@@ -1,0 +1,10 @@
+C:\Users\kubay\source\repos\Lodaky\bin\Debug\Lodaky.exe.config
+C:\Users\kubay\source\repos\Lodaky\bin\Debug\Lodaky.exe
+C:\Users\kubay\source\repos\Lodaky\bin\Debug\Lodaky.pdb
+C:\Users\kubay\source\repos\Lodaky\obj\Debug\Lodaky.csprojAssemblyReference.cache
+C:\Users\kubay\source\repos\Lodaky\obj\Debug\Lodaky.Form1.resources
+C:\Users\kubay\source\repos\Lodaky\obj\Debug\Lodaky.Properties.Resources.resources
+C:\Users\kubay\source\repos\Lodaky\obj\Debug\Lodaky.csproj.GenerateResource.cache
+C:\Users\kubay\source\repos\Lodaky\obj\Debug\Lodaky.csproj.CoreCompileInputs.cache
+C:\Users\kubay\source\repos\Lodaky\obj\Debug\Lodaky.exe
+C:\Users\kubay\source\repos\Lodaky\obj\Debug\Lodaky.pdb
